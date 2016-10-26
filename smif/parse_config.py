@@ -1,4 +1,6 @@
-"""Parse yaml config files, to construct sector models
+"""Parse yaml configuration files to construct sector models
+
+
 
 """
 import jsonschema

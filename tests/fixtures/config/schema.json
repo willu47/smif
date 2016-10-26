@@ -1,0 +1,49 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Sector Model Input",
+    "description": "schema for a set of model inputs",
+    "type" : "object",
+    "required": [ "decision variables", "parameters"],
+    "items": {
+        "title": "Input",
+        "type": "object",
+            "properties": {
+                "bounds": {
+                    "description": "The lower and upper bounds",
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                        "type": "integer"
+                    }
+                    },
+                "index": {
+                    "description": "The position of the argument",
+                    "type": "integer"
+                },
+                "value": {
+                    "description": "The value of the input",
+                    "type": "integer"
+                }
+            }
+    },
+    "decision variables": {
+        "title": "Decision Variables",
+        "type": "array",
+        "properties": {
+              "name": {
+                  "description": "The name of the decision variable",
+                  "type": "string"
+              }
+        }
+    },
+    "parameters": {
+        "title": "Parameters",
+        "type": "array",
+        "properties": {
+              "name": {
+                  "description": "The name of the parameter",
+                  "type": "string"
+              }
+        }
+    }
+}
