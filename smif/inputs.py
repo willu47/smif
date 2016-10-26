@@ -1,6 +1,5 @@
 """Encapsulates the inputs to a sector model
 
-
 .. inheritance-diagram:: smif.inputs
 
 """
@@ -68,7 +67,8 @@ class ModelElement(ABC):
         """
         return self._enumerate_names(self.names)
 
-    def _enumerate_names(self, names):
+    @staticmethod
+    def _enumerate_names(names):
         """
 
         Arguments
@@ -82,21 +82,6 @@ class ModelElement(ABC):
             Key: value pairs to lookup the index of a name
         """
         return {name: index for (index, name) in enumerate(names)}
-
-    def update_value(self, name, value):
-        """Update the value of an input
-
-        Arguments
-        =========
-        name : str
-            The name of the decision variable
-        value : float
-            The value to which to update the decision variable
-
-        """
-        index = self._get_index(name)
-        logger.debug("Updating {} with {}".format(name, value))
-        self.values[index] = value
 
     @staticmethod
     @abstractmethod
@@ -157,26 +142,6 @@ class InputFactory(ModelElement):
     def bounds(self, value):
         self._bounds = value
 
-    def update_value(self, name, value):
-        """Update the value of an input
-
-        (Over rides :staticmethod:`ModelElement.update_value`)
-
-        Arguments
-        =========
-        name : str
-            The name of the decision variable
-        value : float
-            The value to which to update the decision variable
-
-        """
-        index = self._get_index(name)
-        logger.debug("Index of {} is {}".format(name, index))
-        bounds = self.bounds
-        assert bounds[index][0] <= value <= bounds[index][1], \
-            "Bounds exceeded"
-        self.values[index] = value
-
     def _parse_input_dictionary(self, inputs, input_type, mapping):
         """Extracts an array of decision variables from a dictionary of inputs
 
@@ -226,6 +191,24 @@ class ParameterList(InputFactory):
     def get_inputs(self, inputs):
         mapping = {'values': 'value', 'bounds': 'bounds', 'indices': 'index'}
         self._parse_input_dictionary(inputs, 'parameters', mapping)
+
+    def update_value(self, name, value):
+        """Update the value of an input
+
+        Arguments
+        =========
+        name : str
+            The name of the input parameter
+        value : float
+            The value to which to update the input parameter
+
+        """
+        index = self._get_index(name)
+        logger.debug("Index of {} is {}".format(name, index))
+        bounds = self.bounds
+        assert bounds[index][0] <= value <= bounds[index][1], \
+            "Bounds exceeded"
+        self.values[index] = value
 
 
 class DecisionVariableList(InputFactory):

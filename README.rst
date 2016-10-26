@@ -16,6 +16,10 @@ Systems Modelling of Infrastructure Framework
 .. image:: https://coveralls.io/repos/github/nismod/smif/badge.svg?branch=master
     :target: https://coveralls.io/github/nismod/smif?branch=master
 
+.. image:: https://www.quantifiedcode.com/api/v1/project/e6d381b3ce2d4ff585a60e93a07b9fa3/badge.svg
+  :target: https://www.quantifiedcode.com/app/project/e6d381b3ce2d4ff585a60e93a07b9fa3
+  :alt: Code issues
+
 Description
 ===========
 

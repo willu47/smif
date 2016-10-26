@@ -493,7 +493,7 @@ class Model(AbstractModel):
 
     def sequential_simulation(self, model, inputs, decisions):
         results = []
-        for index in range(len(self._timesteps)):
+        for index, _ in enumerate(self._timesteps):
             # Intialise the model
             model.inputs = inputs
             # Update the state from the previous year

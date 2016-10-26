@@ -139,7 +139,7 @@ class SectorModel(object):
         self.inputs.parameters.update_value('existing capacity', 0)
 
         results = []
-        for index in range(len(timesteps)):
+        for index, _ in enumerate(timesteps):
             # Update the state from the previous year
             if index > 0:
                 state_var = 'existing capacity'
@@ -184,7 +184,8 @@ class SectorModel(object):
         logger.debug("Decisions: {}".format(decisions))
         return self.get_objective(results, discount_rate=0.05)
 
-    def get_objective(self, results, discount_rate=0.05):
+    @staticmethod
+    def get_objective(results, discount_rate=0.05):
         discount_factor = [(1 - discount_rate)**n for n in range(0, 15, 5)]
         costs = sum([x['cost']
                      * discount_factor[ix] for ix, x in enumerate(results)])
