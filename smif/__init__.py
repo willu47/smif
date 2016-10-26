@@ -4,10 +4,9 @@
 
 """
 from __future__ import division, print_function, absolute_import
-import argparse
-import sys
 import logging
 import pkg_resources
+from pint import UnitRegistry
 
 __author__ = "Will Usher"
 __copyright__ = "Will Usher"
@@ -19,3 +18,8 @@ try:
     __version__ = pkg_resources.get_distribution(__name__).version
 except:
     __version__ = 'unknown'
+
+ureg = UnitRegistry()
+Q_ = ureg.Quantity
+
+ureg.define('£ = 1 = GBP')

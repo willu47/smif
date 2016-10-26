@@ -2,6 +2,7 @@ import logging
 
 import numpy as np
 from scipy.optimize import minimize
+from smif.financials import discount_factor
 from smif.inputs import ModelInputs
 
 __author__ = "Will Usher"
@@ -186,9 +187,10 @@ class SectorModel(object):
 
     @staticmethod
     def get_objective(results, discount_rate=0.05):
-        discount_factor = [(1 - discount_rate)**n for n in range(0, 15, 5)]
+        timesteps = np.array([2010, 2015, 2020])
+        weighting = discount_factor(timesteps, 2010, discount_rate)
         costs = sum([x['cost']
-                     * discount_factor[ix] for ix, x in enumerate(results)])
+                     * weighting[ix] for ix, x in enumerate(results)])
         logger.debug("Objective function: £{:2}".format(float(costs)))
         return costs
 
