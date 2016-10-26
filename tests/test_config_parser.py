@@ -9,8 +9,16 @@ import smif.parse_config
 from pytest import fixture, raises
 
 
+@fixture(scope="module")
+def fixture_folder():
+    path = os.path.join(os.path.dirname(__file__),
+                        "fixtures",
+                        "config")
+    return path
+
+
 @fixture(scope="function")
-def setup_schema():
+def setup_schema(fixture_folder):
     """Returns the json schema for model inputs
 
     Returns
@@ -18,9 +26,7 @@ def setup_schema():
     schema : dict
     """
     schema_filename = 'schema.json'
-    schema_path = os.path.join(os.path.dirname(__file__),
-                               "fixtures",
-                               "config",
+    schema_path = os.path.join(fixture_folder,
                                schema_filename)
     with open(schema_path, 'r') as sf:
         schema = json.load(sf)
@@ -29,10 +35,8 @@ def setup_schema():
 
 class TestConfigParser:
 
-    def test_load_simple_config(self):
-        path = os.path.join(os.path.dirname(__file__),
-                            "fixtures",
-                            "config",
+    def test_load_simple_config(self, fixture_folder):
+        path = os.path.join(fixture_folder,
                             "simple.yaml")
         conf = smif.parse_config.ConfigParser(path)
         assert conf.data["name"] == "test"
@@ -65,12 +69,10 @@ class TestConfigParser:
 
 class TestConfigParserWaterSupply:
 
-    def test_water_supply_static(self):
+    def test_water_supply_static(self, fixture_folder):
 
         filename = 'water_supply_static_1.yaml'
-        path = os.path.join(os.path.dirname(__file__),
-                            "fixtures",
-                            "config",
+        path = os.path.join(fixture_folder,
                             filename)
         conf = smif.parse_config.ConfigParser(path)
 
@@ -88,12 +90,10 @@ class TestConfigParserWaterSupply:
                     }
         assert actual == expected
 
-    def test_water_supply_validation(self, setup_schema):
+    def test_water_supply_validation(self, setup_schema, fixture_folder):
 
         filename = 'water_supply_static_1.yaml'
-        path = os.path.join(os.path.dirname(__file__),
-                            "fixtures",
-                            "config",
+        path = os.path.join(fixture_folder,
                             filename)
         conf = smif.parse_config.ConfigParser(path)
 
@@ -115,12 +115,11 @@ class TestConfigParserWaterSupply:
                     }
         assert actual == expected
 
-    def test_water_supply_validation_multiple_params(self, setup_schema):
+    def test_water_supply_validation_multiple_params(self, setup_schema,
+                                                     fixture_folder):
 
         filename = 'water_supply_static_2.yaml'
-        path = os.path.join(os.path.dirname(__file__),
-                            "fixtures",
-                            "config",
+        path = os.path.join(fixture_folder,
                             filename)
         conf = smif.parse_config.ConfigParser(path)
 
