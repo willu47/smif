@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.testing import assert_allclose
 from smif import Q_
-from smif.financials import annualised_cost, discount_factor
+from smif.financials import aggregate_costs, annualised_cost, discount_factor
 
 
 def test_annualised_cost():
@@ -37,4 +37,18 @@ def test_discount_factor_array():
                          0.166083384,
                          0.128512157,
                          0.099440257])
+    assert_allclose(actual, expected)
+
+
+def test_discounted_aggregate_costs():
+    annual_cost = Q_(-1500, 'GBP/kW')
+    actual = aggregate_costs(annual_cost, 5, 0.0)
+    expected = Q_(-7500, 'GBP/kW')
+    assert actual == expected
+
+
+def test_discounted_aggregate_costs_bulk():
+    annual_cost = Q_(-176.189437, 'GBP/kW')
+    actual = aggregate_costs(annual_cost, 20, 0.1)
+    expected = Q_(-1650, 'GBP/kW')
     assert_allclose(actual, expected)

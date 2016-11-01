@@ -38,9 +38,12 @@ def annualised_cost(discount_rate, economic_life, capital_cost):
     return annual_cost
 
 
-def aggregate_costs(year_bucket=5):
+@ureg.wraps(ret=ureg.GBP/ureg.kW, args=[ureg.GBP/ureg.kW, None, None])
+def aggregate_costs(annual_cost, year_bucket, discount_rate):
     """Aggregate anualised costs over `year_bucket` size buckets
     """
+    npv = np.npv(discount_rate, np.repeat(annual_cost, year_bucket))
+    return npv
 
 
 def discount_factor(year, base_year=2015, discount_rate=0.05):
@@ -61,3 +64,19 @@ def discount_factor(year, base_year=2015, discount_rate=0.05):
     assert np.all(year >= base_year), msg
     year_difference = year - base_year
     return np.array((1 - discount_rate) ** year_difference)
+
+
+@ureg.wraps(ret=ureg.year, args=[ureg.year, ureg.year, ureg.year])
+def remaining_years(lifetime, current_year, installed_year):
+    """
+
+    Arguments
+    =========
+    lifetime
+        An attribute of an asset type
+    current_year
+        The current time period of the model
+    installed_year
+        An attribute of the state - the year in which the asset was installed
+    """
+    return lifetime - (current_year - installed_year)
