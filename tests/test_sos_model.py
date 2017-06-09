@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from unittest.mock import MagicMock
+
 import numpy as np
 from pytest import fixture, raises
-
 from smif.decision import Planning
 from smif.metadata import Metadata
 from smif.sector_model import SectorModel
@@ -80,7 +81,7 @@ def get_sos_model_only_scenario_dependencies(setup_region_data):
     ws.interventions = [
         {"name": "water_asset_a", "location": "oxford"},
         {"name": "water_asset_b", "location": "oxford"},
-        {"name": "water_asset_c", "location": "oxford"},
+        {"name": "energy_asset_a", "location": "oxford"},
     ]
     ws_data = {
         'name': ws.name,
@@ -92,6 +93,9 @@ def get_sos_model_only_scenario_dependencies(setup_region_data):
 
     builder.add_model(ws)
     builder.add_model_data(ws, ws_data)
+
+    builder.add_planning([])
+    builder.add_initial_state()
 
     ws2 = WaterSupplySectorModel()
     ws2.name = 'water_supply_2'
@@ -190,6 +194,10 @@ def get_sos_model_with_model_dependency(setup_region_data):
 
     builder.add_model(ws2)
 
+    builder.planning = Planning([])
+    builder.interventions = MagicMock(data=ws.interventions)
+    builder.add_initial_state()
+
     return builder.finish()
 
 
@@ -268,6 +276,10 @@ def get_sos_model_with_summed_dependency(setup_region_data):
     ]
     ws3.name = 'water_supply_3'
     builder.add_model(ws3)
+
+    builder.planning = Planning([])
+    builder.interventions = MagicMock(data={})
+    builder.add_initial_state()
 
     return builder.finish()
 
@@ -416,10 +428,12 @@ class TestSosModel():
             }
         ]
         planning = Planning(planning_data)
-        sos_model.planning = planning
+        sos_model.state._planned = planning
+
+        sos_model.state.reset()
 
         model = sos_model.models['water_supply']
-        actual = sos_model.get_decisions(model, 2010)
+        _, actual = sos_model.state.get_all_state(2010, 'water_supply')
         assert actual[0].name == 'water_asset_a'
         assert actual[0].location == 'oxford'
 
@@ -517,6 +531,12 @@ class TestSosModelBuilder():
         builder.add_model_data(model, model_data)
         assert isinstance(builder.sos_model.models['water_supply'],
                           SectorModel)
+
+        builder.planning = Planning([])
+
+        builder.add_state_data([])
+
+        builder.add_initial_state()
 
         sos_model = builder.finish()
         assert isinstance(sos_model, SosModel)
@@ -714,6 +734,9 @@ class TestSosModelBuilder():
         b_model.inputs = b_inputs
         b_model.outputs = b_outputs
         builder.add_model(b_model)
+
+        builder.interventions = MagicMock(data={})
+        builder.add_initial_state()
 
         builder.finish()
 
@@ -1034,6 +1057,9 @@ class TestSosModelBuilder():
 
         builder = SosModelBuilder()
         builder.add_timesteps([2010])
+        builder.planning = Planning([])
+        builder.interventions = MagicMock(data={})
+        builder.add_initial_state()
         ws = WaterSupplySectorModel()
         ws.name = 'water_supply'
         ws.inputs = [
