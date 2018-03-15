@@ -1,8 +1,8 @@
+name: Test Project
 interval_definitions:
 - description: ''
   filename: annual_intervals.csv
   name: annual
-name: Test Project
 narrative_sets:
 - description: Describes the evolution of technology
   name: technology
